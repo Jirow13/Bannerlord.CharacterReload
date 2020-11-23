@@ -103,6 +103,7 @@
 		<string id="CharacterCreation_ProcessSkinsXmlDebug" text="[CharacterCreation] Patching Skins XML to reverse file loading order"/>
 
 		<string id="cr_edit_appearance" text="Edit Appearance" />
+		<string id="cr_hero_grow" text="Grow Up" />		
 		<string id="cr_change_name" text="Change Name" />
 		<string id="str_facegen_skin_TorsoBelly" text="Belly Girth" />
 		<string id="str_facegen_skin_TorsoHips" text="Hip Size" />
