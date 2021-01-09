@@ -11,7 +11,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
 
-namespace CharacterReload.Pathes
+namespace CharacterReload.Patch
 {
     class CharacterObjectPath
     {
@@ -21,10 +21,10 @@ namespace CharacterReload.Pathes
 
             static void Postfix(CharacterObject __instance, BodyProperties properties, bool isFemale)
             {
-                if (__instance.IsPlayerCharacter && __instance.IsHero)
-                {
-                    __instance.HeroObject.SetBirthDay(HeroHelper.GetRandomBirthDayForAge((int)properties.Age));
-                }
+                //if (__instance.IsPlayerCharacter && __instance.IsHero)
+                //{
+                //    __instance.HeroObject.SetBirthDay(HeroHelper.GetRandomBirthDayForAge((int)properties.Age));
+                //}
 
                 if (!__instance.IsPlayerCharacter && __instance.IsHero)
                 {
@@ -32,7 +32,7 @@ namespace CharacterReload.Pathes
                     ReflectUtils.ReflectPropertyAndSetValue("StaticBodyProperties", properties.StaticProperties, hero);
                     hero.Weight = properties.Weight;
                     hero.Build = properties.Build;
-                    hero.SetBirthDay(HeroHelper.GetRandomBirthDayForAge((int)properties.Age));
+                    //hero.SetBirthDay(HeroHelper.GetRandomBirthDayForAge((int)properties.Age));
                     hero.UpdatePlayerGender(isFemale);
                 }
             }

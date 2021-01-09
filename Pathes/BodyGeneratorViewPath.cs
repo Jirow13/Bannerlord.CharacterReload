@@ -19,7 +19,7 @@ using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade.GauntletUI;
 using TaleWorlds.TwoDimension;
 
-namespace CharacterReload.Pathes
+namespace CharacterReload.Patch
 {
     [HarmonyPatch(typeof(BodyGeneratorView), MethodType.Constructor, new Type[] {
      typeof(ControlCharacterCreationStage),
@@ -49,7 +49,6 @@ namespace CharacterReload.Pathes
             FacGenRecordVM facGenRecord = new FacGenRecordVM(__instance, GlobalDataProvider.Instance.FacGenRecordData());
             GauntletMovie movie  = __instance.GauntletLayer.LoadMovie("FacGenRecord", facGenRecord);
             //movie.BrushFactory.LoadBrushFile("FacGenRecord");
-            IEnumerable<Brush> brushes =  movie.BrushFactory.Brushes.Where(obj => obj.Name.Contains("Clan"));
         }
     }
 
