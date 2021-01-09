@@ -47,7 +47,7 @@ namespace CharacterReload.Screen
 			{
 				this.CloseScreen();
 			}
-		}
+		} // Crash after this.
 
 		public void OnExit()
 		{

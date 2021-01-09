@@ -1,188 +1,72 @@
-﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildProjectDirectory)\env.props" />
-  <!-- Main Project Properties -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MNB2DIR>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord</MNB2DIR>
-    <MOD_ID>CharacterReload</MOD_ID>
-    <MOD_FOLDER>$(MNB2DIR)\Modules\$(MOD_ID)\</MOD_FOLDER>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' ">x64</PlatformTarget>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1C77395D-11EA-41F9-843C-067173E5685D}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>$(MOD_ID)</RootNamespace>
-    <AssemblyName>$(MOD_ID)</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Version>1.5.5.0</Version>
+    <TargetFramework>net472</TargetFramework>
+    <Platforms>x64</Platforms>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ModuleName>$(MSBuildProjectName)</ModuleName>
+	<!-- Set as Machine Env Variable, or define in line below -->
+	<!-- <BL_GAME_DIR>Define Path Here</BL_GAME_DIR> -->
+    <GameFolder>$(BL_GAME_DIR)</GameFolder>
+	<!-- <GameFolder>$(BL_GAME_DIR_GOG)</GameFolder> -->
+    <Authors>Jiros</Authors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NoWarn>1701;1702</NoWarn>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(MNB2DIR)\bin\Win64_Shipping_Client\Bannerlord.exe</StartProgram>
-    <StartArguments>
-    </StartArguments>
-    <StartWorkingDirectory>$(MNB2DIR)\bin\Win64_Shipping_Client</StartWorkingDirectory>
-  </PropertyGroup>
-  <!-- Bannerlord Native Assemblies -->
+
   <ItemGroup>
-    <Reference Include="0Harmony, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Lib.Harmony.2.0.2\lib\net472\0Harmony.dll</HintPath>
-    </Reference>
-    <!-- Bannerlord Native Assemblies -->
-    <Reference Include="$(MNB2DIR)\bin\Win64_Shipping_Client\TaleWorlds*.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="$(MNB2DIR)\Modules\Native\bin\Win64_Shipping_Client\TaleWorlds*.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="$(MNB2DIR)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox*.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="$(MNB2DIR)\Modules\StoryMode\bin\Win64_Shipping_Client\StoryMode*.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="$(MNB2DIR)\Modules\CustomBattle\bin\Win64_Shipping_Client\TaleWorlds*.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.IO.Packaging, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.IO.Packaging.4.7.0\lib\net46\System.IO.Packaging.dll</HintPath>
-    </Reference>
+    <Reference Include="mscorlib" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.Xml.XmlDocument.4.3.0\lib\net46\System.Xml.XmlDocument.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
+    <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="WindowsBase" />
+    <Reference Include="$(GameFolder)\Modules\Native\bin\Win64_Shipping_Client\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\SandBox\bin\Win64_Shipping_Client\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\SandBoxCore\bin\Win64_Shipping_Client\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\StoryMode\bin\Win64_Shipping_Client\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
-  <!-- Files & Classes -->
+
   <ItemGroup>
-    <Compile Include="Data\FacGenRecordData.cs" />
-    <Compile Include="Data\GlobalDataProvider.cs" />
-    <Compile Include="Data\HeroAdminCharacter.cs" />
-    <Compile Include="Data\HeroAdminCharacterAttribute.cs" />
-    <Compile Include="Data\HeroAdminCharacterPerk.cs" />
-    <Compile Include="Data\HeroAdminCharacterSkill.cs" />
-    <Compile Include="Data\HeroAdminCharacterTrait.cs" />
-    <Compile Include="EncyclopediaPageChangedHandle.cs" />
-    <Compile Include="Extension\Helper.cs" />
-    <Compile Include="Extension\StringBuilderExtension.cs" />
-    <Compile Include="GauntletUI\Screen\HeroAdminScreen.cs" />
-    <Compile Include="GauntletUI\Screen\State\HeroAdminState.cs" />
-    <Compile Include="MBBindingLordItemListInterceptor.cs" />
-    <Compile Include="Pathes\BodyGeneratorViewPath.cs" />
-    <Compile Include="Pathes\CharacterObjectPath.cs" />
-    <Compile Include="Pathes\ClanMemberPath.cs" />
-    <Compile Include="Pathes\FaceGenPropertyVMPath.cs" />
-    <Compile Include="Pathes\LocationPath.cs" />
-    <Compile Include="Pathes\ModuleProcessSkinsXmlPatch.cs" />
-    <Compile Include="Store\ConfigDataStore.cs" />
-    <Compile Include="Store\GlobalConfigData.cs" />
-    <Compile Include="SubModule.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\HeroUtils.cs" />
-    <Compile Include="Utils\InformationUtils.cs" />
-    <Compile Include="Utils\JsonUtils.cs" />
-    <Compile Include="Utils\ReflectUtils.cs" />
-    <Compile Include="VM\Facgen\FacGenRecordItemVM.cs" />
-    <Compile Include="VM\Facgen\FacGenRecordVM.cs" />
-    <Compile Include="VM\HeroAdmin\HereAdminDashBoardVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminAttributeItemVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminCharacterVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminDevelopAttributeVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminDevelopCharacterPreviewVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminDevelopSkillPerkVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminDevelopTraitItemVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminDevelopTraitsVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminDevelopVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminHeroSelectorItemVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminHeroSelectorVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminPerkVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminRecordItemVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminRecordVM.cs" />
-    <Compile Include="VM\HeroAdmin\HeroAdminSkillVM.cs" />
-    <Compile Include="VM\HeroBuilderVM.cs" />
-    <Compile Include="VM\MyClanLordItemVM.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Resource\ModuleData\project.mbproj" />
+    <PackageReference Include="Bannerlord.BuildResources" Version="1.0.0.32">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lib.Harmony" Version="2.0.4" IncludeAssets="compile" />
+    <PackageReference Include="Bannerlord.ButterLib" Version="1.0.18" IncludeAssets="compile" />
+    <PackageReference Include="Bannerlord.UIExtenderEx" Version="1.0.5" IncludeAssets="compile" />
+    <PackageReference Include="Bannerlord.MCM" Version="4.1.2" IncludeAssets="compile" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" PrivateAssets="All" />
   </ItemGroup>
+
   <ItemGroup>
-    <Content Include="Resource\GUI\Brushes\FacGenRecordBrushes.xml" />
-    <Content Include="Resource\GUI\Prefabs\Clan\ClanMembers.xml" />
-    <Content Include="Resource\GUI\Prefabs\Facgen\FacGenRecord.xml" />
-    <Content Include="Resource\GUI\Prefabs\Facgen\FacGenRecordItem.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminCharacter.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDashBoard.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDevelop.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDevelopAttribute.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDevelopAttributeItem.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDevelopSkillPerk.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDevelopTraitItem.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminDevelopTraits.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminHeroSelector.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminRecord.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminRecordItem.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroAdmin\HeroAdminSkillAndFouseSet.xml" />
-    <Content Include="Resource\GUI\Prefabs\HeroEditor.xml" />
-    <Content Include="Resource\ModuleData\Languages\CNs\std_module_stringsl.xml" />
-    <Content Include="Resource\ModuleData\Languages\English\std_module_stringsl.xml" />
-    <Content Include="Resource\ModuleData\skins.xml" />
-    <Content Include="Resource\ModuleData\strings.xml" />
-    <Content Include="Resource\ModuleData\xml_attributes_to_be_identified.txt" />
-    <Content Include="Resource\SubModule.xml" />
+    <Folder Include="_Module\" />
   </ItemGroup>
-  <!-- Post-Build -->
-  <PropertyGroup>
-    <PostBuildEvent>xcopy  /Y /S "$(MSBuildProjectDirectory)\resource" "$(MNB2DIR)\Modules\CharacterReload\"</PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MOD_FOLDER)\bin\Win64_Shipping_Client\" />
-    <!--
-    <Copy SourceFiles="@(GUI)" DestinationFolder="$(MOD_FOLDER)\GUI\%(RecursiveDir)" />
-    <Copy SourceFiles="@(ModuleData)" DestinationFolder="$(MOD_FOLDER)\ModuleData\%(RecursiveDir)" />
-    <Copy SourceFiles="$(ProjectDir)\SubModule.xml" DestinationFolder="$(MOD_FOLDER)" />
--->
-  </Target>
 </Project>

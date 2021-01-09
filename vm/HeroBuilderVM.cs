@@ -244,41 +244,42 @@ namespace CharacterReload.VM
             if (gauntletEncyclopediaScreenManager == null)
                 return;
 
-            EncyclopediaData encyclopediaData = AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager) as EncyclopediaData;
-            EncyclopediaPageVM encyclopediaPageVM = AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData) as EncyclopediaPageVM;
+            EncyclopediaData encyclopediaData = (EncyclopediaData)AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager);
+            EncyclopediaPageVM encyclopediaPageVM = (EncyclopediaPageVM)AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData);
 
-            this.selectedHeroPage = (encyclopediaPageVM as EncyclopediaHeroPageVM);
+            selectedHeroPage = (EncyclopediaHeroPageVM)encyclopediaPageVM;
 
-            if (this.selectedHeroPage == null)
+            if (selectedHeroPage == null)
                 return;
 
-            this.selectedHeroPage.Refresh();
+            selectedHeroPage.Refresh();
         }
 
         public void ClosePage()
         {
-            GauntletEncyclopediaScreenManager gauntletEncyclopediaScreenManager = MapScreen.Instance.EncyclopediaScreenManager as GauntletEncyclopediaScreenManager;
+            GauntletEncyclopediaScreenManager gauntletEncyclopediaScreenManager = (GauntletEncyclopediaScreenManager)MapScreen.Instance.EncyclopediaScreenManager;
             if (gauntletEncyclopediaScreenManager == null)
                 return;
 
-            EncyclopediaData encyclopediaData = AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager) as EncyclopediaData;
-            EncyclopediaPageVM encyclopediaPageVM = AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData) as EncyclopediaPageVM;
+            EncyclopediaData encyclopediaData = (EncyclopediaData)AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager);
+            EncyclopediaPageVM encyclopediaPageVM = (EncyclopediaPageVM)AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData);
 
-            this.selectedHeroPage = (encyclopediaPageVM as EncyclopediaHeroPageVM);
+            selectedHeroPage = (EncyclopediaHeroPageVM)encyclopediaPageVM;
 
-            if (this.selectedHeroPage == null)
+            if (selectedHeroPage == null)
                 return;
 
             gauntletEncyclopediaScreenManager.CloseEncyclopedia();
         }
 
+        // Edit Appearance
         public void Edit(Hero hero)
         {
             if (hero.CharacterObject == null)
                 return;
 
             ClosePage();
-            TaleWorlds.Core.FaceGen.ShowDebugValues = true;
+            FaceGen.ShowDebugValues = true;
             ScreenManager.PushScreen(ViewCreator.CreateMBFaceGeneratorScreen(hero.CharacterObject, false));
         }
 

@@ -119,7 +119,7 @@ namespace CharacterReload.VM.HeroAdmin
 
         }
 
-
+        // They expanded the Character Code in 1.5.6 to include two color codes (Color1 and Color2)- Jiros
         public CharacterCode CreateFrom(HeroAdminCharacter item)
         {
             CharacterCode characterCode = CharacterCode.CreateEmpty();
@@ -141,6 +141,10 @@ namespace CharacterReload.VM.HeroAdmin
             mBStringBuilder.Append<string>(characterCode.IsHero ? "1" : "0");
             mBStringBuilder.Append<string>("@---@");
             mBStringBuilder.Append<string>(((int)characterCode.FormationClass).ToString());
+            mBStringBuilder.Append<string>("@---@");
+            mBStringBuilder.Append<string>(characterCode.Color1.ToString());
+            mBStringBuilder.Append<string>("@---@");
+            mBStringBuilder.Append<string>(characterCode.Color2.ToString());
             mBStringBuilder.Append<string>("@---@");
             ReflectUtils.ReflectPropertyAndSetValue("Code", mBStringBuilder.ToStringAndRelease(), characterCode);
             return characterCode;
