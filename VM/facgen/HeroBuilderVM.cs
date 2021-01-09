@@ -17,7 +17,6 @@ using Helpers;
 namespace CharacterReload.VM
 {
 
-    // Fixed 固定宽高， CoverChildren 自适应（以子控件） StretchToParent（以父控件做参考）
     public partial class HeroBuilderVM : ViewModel
     {
 
@@ -30,6 +29,7 @@ namespace CharacterReload.VM
         {
             this.editCallback = editCallback;
         }
+
 
         [DataSourceProperty]
         public string EditAppearanceText
@@ -58,6 +58,7 @@ namespace CharacterReload.VM
             }
         }
 
+
         // Jiros Add for Grow-Up code -- 
         [DataSourceProperty]
         public string HeroGrowText
@@ -69,10 +70,11 @@ namespace CharacterReload.VM
         }
         // -- End Jiros Add
 
-
         public void ExecuteEdit()
         {
             if (selectedHero == null)
+                return;
+            if (selectedHero.IsChild)
                 return;
 
             Edit(selectedHero);
@@ -89,7 +91,7 @@ namespace CharacterReload.VM
                 return;
 
             Name(selectedHero);
-            Action<Hero> action = nameCallback;
+            Action<Hero> action = this.nameCallback;
 
             if (action == null)
                 return;
@@ -124,13 +126,15 @@ namespace CharacterReload.VM
         {
             if (selectedHero == null)
                 return;
+
+            if (!selectedHero.IsChild)
+                return;
             GrowUp(selectedHero);
         }
 
         public void GrowUp(Hero hero)
         {
             float age = hero.Age;
-            //float new_age = 0;
             int infant = Campaign.Current.Models.AgeModel.BecomeInfantAge;
             //int child = Campaign.Current.Models.AgeModel.BecomeChildAge;
             int teen = Campaign.Current.Models.AgeModel.BecomeTeenagerAge;
@@ -138,7 +142,7 @@ namespace CharacterReload.VM
 
             if (age >= adult)
             {
-                Helper.ColorRedMessage("Use this command to grow a child to adulthood without skipping critical 'hero growth' functions that happen over time. This hero is already an adult.");
+                Helper.ColorRedMessage("This hero is already an adult.");
                 return;
             }
 
@@ -155,7 +159,7 @@ namespace CharacterReload.VM
 
             //if (age < teen)
             else if (age < teen)
-            { 
+            {
                 SendHeroReachesTeenAgeEvent(hero);
                 Helper.DebugMessage("Out of teen event sent.");
                 hero.SetBirthDay(CampaignTime.YearsFromNow((float)teen * -1));
@@ -167,21 +171,16 @@ namespace CharacterReload.VM
             {
                 SendHeroComesOfAgeEvent(hero);
                 Helper.DebugMessage("Come of age event sent.");
+                GrowUpForFixSkill(hero);
                 hero.SetBirthDay(CampaignTime.YearsFromNow((float)adult * -1));
+                var adulttextObject = new TextObject("{=tips_cr_HeroGrowAdult}Your child is now a qualified hero");
+                StringHelpers.SetCharacterProperties("CR_HERO", hero.CharacterObject, null, adulttextObject);
+
             }
 
 
-            /* Was trying to mimic how TW does the age change in AgingCampaignBehavior.ChangeMainHeroAgeCheat() code, but scrapped it. 
-             * 
-            float num = (float)CampaignTime.Now.GetYear - age;
-            float num2 = (float)CampaignTime.Now.GetDayOfYear + 2;
-            CampaignTime newage = CampaignTime.Years(num) + CampaignTime.Days(num2);
-            int daysFromBirth = (int)hero.BirthDay.ElapsedDaysUntilNow;
-            hero.SetBirthDay(CampaignTime.DaysFromNow(1-(float)heroAgeInDays));
-            */
-
             //Helper.ColorGreenMessage("Grew "+hero.Name+" to Adulthood. Wait a day or two to assure they go through the Come-of-Age process and get stats.");
-            Helper.ColorGreenMessage("Grew " + hero.Name + " to next stage of development. Wait a day or two to assure they go through the growth process and get added stats/development.");
+            Helper.ColorGreenMessage("Grew " + hero.Name + " Wait a day or two to assure they go through the growth process and get added stats/development.");
             Helper.DebugMessage("Hero: " + hero.Name + " | Old Age = " + age + " | New age = " + hero.Age);
         }
 
@@ -210,6 +209,69 @@ namespace CharacterReload.VM
             typeof(CampaignEventDispatcher), "OnHeroGrowsOutOfInfancy");
 
         /* ---- End Jiros Adds ---- */
+        private static void GrowUpForFixSkill(Hero hero)
+        {
+
+            // InformationManager.DisplayMessage(new InformationMessage("MoreSpouse GrowUpForFixSkill " + hero.Name));
+            if (hero == Hero.MainHero)
+            {
+                return;
+            }
+
+            hero.ClearSkills();
+
+            // hero.HeroDeveloper.ClearHeroLevel();
+            float fatherInheritDivider = 0;
+            float motherInheritDivider = 0;
+            if (hero.IsFemale == true)
+            {
+                fatherInheritDivider = 0.4f;
+                motherInheritDivider = 0.6f;
+            }
+            else
+            {
+                fatherInheritDivider = 0.6f;
+                motherInheritDivider = 0.4f;
+            }
+
+            Hero InheritFather = hero.Father != null ? hero.Father : hero;
+            Hero InheritMother = hero.Mother != null ? hero.Mother : hero;
+
+            float skillTimes = (new Random().Next(2) == 1) ? 1.5f : 1f;
+
+            if (Hero.MainHero.Children.Contains(hero) || Hero.MainHero.Father.Children.Contains(hero))
+            {
+
+                int randomTims = new Random().Next(5);
+                if (randomTims == 1)
+                {
+                    skillTimes = skillTimes * 1.5f;
+                    InformationManager.AddQuickInformation(new TextObject($"Your children {hero.Name} get more power"),
+                    0, null, "event:/ui/notification/quest_finished");
+                }
+
+            }
+
+
+            foreach (SkillObject skillIT in DefaultSkills.GetAllSkills())
+            {
+                int sikillValue = (int)(InheritFather.GetSkillValue(skillIT) * fatherInheritDivider + InheritMother.GetSkillValue(skillIT) * motherInheritDivider);
+                hero.HeroDeveloper.ChangeSkillLevel(skillIT, (int)(sikillValue * skillTimes), false);
+                hero.HeroDeveloper.TakeAllPerks(skillIT);
+            }
+
+            hero.ClearTraits();
+            hero.SetTraitLevel(DefaultTraits.Honor, InheritMother.GetTraitLevel(DefaultTraits.Honor));
+            hero.SetTraitLevel(DefaultTraits.Valor, InheritMother.GetTraitLevel(DefaultTraits.Valor));
+            hero.SetTraitLevel(DefaultTraits.Mercy, InheritMother.GetTraitLevel(DefaultTraits.Mercy));
+            hero.SetTraitLevel(DefaultTraits.Generosity, InheritMother.GetTraitLevel(DefaultTraits.Generosity));
+            hero.SetTraitLevel(DefaultTraits.Calculating, InheritMother.GetTraitLevel(DefaultTraits.Calculating));
+
+            hero.Level = 0;
+            hero.HeroDeveloper.UnspentFocusPoints = 20;
+            hero.HeroDeveloper.UnspentAttributePoints = 20;
+
+        }
 
         public void Name(Hero hero)
         {
@@ -229,7 +291,11 @@ namespace CharacterReload.VM
 
             if (!string.IsNullOrEmpty(heroName))
             {
-                selectedHero.Name = new TextObject(heroName);
+                var newName = new TextObject(heroName);
+                selectedHero.Name = newName;
+                selectedHero.FirstName = newName;
+                if (selectedHero.IsPartyLeader)
+                    selectedHero.PartyBelongedTo.Name = MobilePartyHelper.GeneratePartyName(selectedHero.CharacterObject);
                 ClosePage();
             }
             else
@@ -244,35 +310,34 @@ namespace CharacterReload.VM
             if (gauntletEncyclopediaScreenManager == null)
                 return;
 
-            EncyclopediaData encyclopediaData = (EncyclopediaData)AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager);
-            EncyclopediaPageVM encyclopediaPageVM = (EncyclopediaPageVM)AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData);
+            EncyclopediaData encyclopediaData = AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager) as EncyclopediaData;
+            EncyclopediaPageVM encyclopediaPageVM = AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData) as EncyclopediaPageVM;
 
-            selectedHeroPage = (EncyclopediaHeroPageVM)encyclopediaPageVM;
+            this.selectedHeroPage = (encyclopediaPageVM as EncyclopediaHeroPageVM);
 
-            if (selectedHeroPage == null)
+            if (this.selectedHeroPage == null)
                 return;
 
-            selectedHeroPage.Refresh();
+            this.selectedHeroPage.Refresh();
         }
 
         public void ClosePage()
         {
-            GauntletEncyclopediaScreenManager gauntletEncyclopediaScreenManager = (GauntletEncyclopediaScreenManager)MapScreen.Instance.EncyclopediaScreenManager;
+            GauntletEncyclopediaScreenManager gauntletEncyclopediaScreenManager = MapScreen.Instance.EncyclopediaScreenManager as GauntletEncyclopediaScreenManager;
             if (gauntletEncyclopediaScreenManager == null)
                 return;
 
-            EncyclopediaData encyclopediaData = (EncyclopediaData)AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager);
-            EncyclopediaPageVM encyclopediaPageVM = (EncyclopediaPageVM)AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData);
+            EncyclopediaData encyclopediaData = AccessTools.Field(typeof(GauntletEncyclopediaScreenManager), "_encyclopediaData").GetValue(gauntletEncyclopediaScreenManager) as EncyclopediaData;
+            EncyclopediaPageVM encyclopediaPageVM = AccessTools.Field(typeof(EncyclopediaData), "_activeDatasource").GetValue(encyclopediaData) as EncyclopediaPageVM;
 
-            selectedHeroPage = (EncyclopediaHeroPageVM)encyclopediaPageVM;
+            this.selectedHeroPage = (encyclopediaPageVM as EncyclopediaHeroPageVM);
 
-            if (selectedHeroPage == null)
+            if (this.selectedHeroPage == null)
                 return;
 
             gauntletEncyclopediaScreenManager.CloseEncyclopedia();
         }
 
-        // Edit Appearance
         public void Edit(Hero hero)
         {
             if (hero.CharacterObject == null)
@@ -280,7 +345,7 @@ namespace CharacterReload.VM
 
             ClosePage();
             FaceGen.ShowDebugValues = true;
-            ScreenManager.PushScreen(ViewCreator.CreateMBFaceGeneratorScreen(hero.CharacterObject, false));
+            ScreenManager.PushScreen(ViewCreator.CreateMBFaceGeneratorScreen(hero.CharacterObject, false, null));
         }
 
         private Hero selectedHero;

@@ -19,8 +19,6 @@ namespace CharacterReload.Data
 
         public int Level { get; set; }
 
-        public string Name { get; set; }
-
         public bool IsFemale { get; set; }
 
         public string BodyPropertiesString { get; set; }
@@ -94,7 +92,7 @@ namespace CharacterReload.Data
 
         public  void ToHero(Hero hero)
         {
-           /// hero.HeroDeveloper.ClearHero();
+            hero.HeroDeveloper.ClearHero();
             BodyProperties bodyProperties = BodyProperties.Default;
             hero.Level = this.Level;
             BodyProperties.FromString(this.BodyPropertiesString, out bodyProperties);
